@@ -3,11 +3,24 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useUser } from "@clerk/nextjs";
 
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
+
+type SignInOutButton = {
+  isSignedIn: boolean | undefined;
+};
+const SignInOutButton = ({ isSignedIn }: SignInOutButton) => {
+  return (
+    <button className="rounded-lg bg-gradient-to-r from-[#572799] to-[#3c42af] p-4 text-white">
+      {!isSignedIn && <SignInButton />}
+      {!!isSignedIn && <SignOutButton />}
+    </button>
+  );
+};
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
   const user = useUser();
+
   return (
     <>
       <Head>
@@ -16,9 +29,13 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
+        <div className="text-white">
+          {!!user.isSignedIn
+            ? `Hello ${!!user.user.fullName ? user.user.fullName : ""}`
+            : "Hi stranger!"}
+        </div>
         <div>
-          {!user.isSignedIn && <SignInButton />}
-          {!!user.isSignedIn && <SignOutButton />}
+          <SignInOutButton isSignedIn={user.isSignedIn} />
         </div>
       </main>
     </>
